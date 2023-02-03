@@ -1,9 +1,10 @@
 extends KinematicBody2D
 
-export var velocity 		= 0
-export var max_velocity 	= 0
-export(float) var friction 	= 0.0
-export var jump_force 		= 0
+export(int) var VELOCITY 		= 0
+export(int) var MAX_VELOCITY 	= 0
+export(float) var FRICTION 		= 0.0
+export var JUMP_FORCE 			= 0
+export(int) var GRAVITY			= 0
 
 var motion = Vector2.ZERO
 
@@ -19,15 +20,26 @@ var current_state = states.IDLEING
 func _process(delta):
 	match current_state:
 		states.IDLEING:
-			print(get_input_vector())
+			if get_input_vector() != 0:
+				change_state_to(states.WALKING)
+				return
+			apply_friction()
+			apply_gravity(delta)
 			move()
 		states.WALKING:
-			print("Walking")
+			apply_horizontal_force(get_input_vector(), delta)
+			move()
+			if not is_on_floor():
+				apply_gravity(delta)
 		states.JUMPING:
 			print("Jumping")
 		states.SLIDING:
 			print("Sliding")
 
+
+func change_state_to(new_state:int):
+	current_state = new_state
+	return new_state
 
 
 func get_input_vector():
@@ -35,12 +47,24 @@ func get_input_vector():
 	return input_vector
 
 
-func move():
-	var input_vector = get_input_vector()
-	if input_vector != 0:
-		motion.x = velocity * input_vector
-	else:
-		motion.x = 0
+func apply_friction():
+	motion.x = lerp( motion.x, 0, FRICTION )
 
-	motion = move_and_slide(motion, Vector2.UP, true)
-	print(motion)
+
+func apply_horizontal_force(input_vector:int, delta:float):
+	if input_vector != 0:
+		motion.x += ( VELOCITY * input_vector ) * delta
+	else:
+		change_state_to( states.IDLEING )
+	return motion.x
+
+
+func apply_gravity(delta):
+	if not is_on_floor():
+		motion.y += GRAVITY * delta
+
+
+func move():
+	motion = move_and_slide( motion, Vector2.UP, true )
+	motion.x = clamp( motion.x, -MAX_VELOCITY, MAX_VELOCITY )
+	print( motion )
