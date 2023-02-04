@@ -14,7 +14,9 @@ __meta__ = {
 VELOCITY = 300
 MAX_VELOCITY = 80
 FRICTION = 0.2
-GRAVITY = 100
+JUMP_FORCE = 100
+CUT_HEIGHT = 0.4
+GRAVITY = 300
 
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 0, -4 )

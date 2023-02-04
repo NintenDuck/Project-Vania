@@ -4,6 +4,7 @@ export(int) var VELOCITY 		= 0
 export(int) var MAX_VELOCITY 	= 0
 export(float) var FRICTION 		= 0.0
 export var JUMP_FORCE 			= 0
+export(float) var CUT_HEIGHT	= 0.0
 export(int) var GRAVITY			= 0
 
 var motion = Vector2.ZERO
@@ -23,11 +24,13 @@ func _process(delta):
 			if get_input_vector() != 0:
 				change_state_to(states.WALKING)
 				return
+			check_jump()
 			apply_friction()
 			apply_gravity(delta)
 			move()
 		states.WALKING:
 			apply_horizontal_force(get_input_vector(), delta)
+			check_jump()
 			move()
 			if not is_on_floor():
 				apply_gravity(delta)
@@ -36,6 +39,11 @@ func _process(delta):
 		states.SLIDING:
 			print("Sliding")
 
+
+func _input(event):
+	if event.is_action_released("k_jump"):
+		if motion.y < 0:
+			motion.y *= CUT_HEIGHT
 
 func change_state_to(new_state:int):
 	current_state = new_state
@@ -59,12 +67,24 @@ func apply_horizontal_force(input_vector:int, delta:float):
 	return motion.x
 
 
+func check_jump():
+	if not is_on_floor(): return
+	
+	if Input.is_action_just_pressed("k_jump"):
+		jump(JUMP_FORCE)
+
+
+func jump(jump_force:int):
+	motion.y -= jump_force
+
+
 func apply_gravity(delta):
-	if not is_on_floor():
-		motion.y += GRAVITY * delta
+	if is_on_floor(): return
+
+	motion.y += GRAVITY * delta
 
 
 func move():
 	motion = move_and_slide( motion, Vector2.UP, true )
 	motion.x = clamp( motion.x, -MAX_VELOCITY, MAX_VELOCITY )
-	print( motion )
+	print( motion.y )
