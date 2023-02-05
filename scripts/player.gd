@@ -7,7 +7,9 @@ export var JUMP_FORCE 			= 0
 export(float) var CUT_HEIGHT	= 0.0
 export(int) var GRAVITY			= 0
 
-var motion = Vector2.ZERO
+var motion 						= Vector2.ZERO
+var double_jump_powerup:bool	= true
+var jump_counter:int			= 0
 
 enum states {
 	IDLEING,
@@ -68,13 +70,16 @@ func apply_horizontal_force(input_vector:int, delta:float):
 
 
 func check_jump():
-	if not is_on_floor(): return
-	
-	if Input.is_action_just_pressed("k_jump"):
-		jump(JUMP_FORCE)
+	print("#Jumps: ", jump_counter)
+	if is_on_floor(): jump_counter = 0
 
+	if is_on_floor() or jump_counter < 2:
+		if Input.is_action_just_pressed("k_jump"):
+			jump_counter += 1
+			jump(JUMP_FORCE)
 
 func jump(jump_force:int):
+	motion.y = 0
 	motion.y -= jump_force
 
 
@@ -87,4 +92,4 @@ func apply_gravity(delta):
 func move():
 	motion = move_and_slide( motion, Vector2.UP, true )
 	motion.x = clamp( motion.x, -MAX_VELOCITY, MAX_VELOCITY )
-	print( motion.y )
+	# print( motion.y )
