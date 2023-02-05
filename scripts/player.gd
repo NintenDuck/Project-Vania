@@ -28,16 +28,23 @@ func _process(delta):
 				return
 			check_jump()
 			apply_friction()
-			apply_gravity(delta)
+			if not is_on_floor():
+				apply_gravity(delta)
 			move()
 		states.WALKING:
 			apply_horizontal_force(get_input_vector(), delta)
 			check_jump()
 			move()
 			if not is_on_floor():
-				apply_gravity(delta)
+				change_state_to(states.JUMPING)
 		states.JUMPING:
-			print("Jumping")
+			if is_on_floor():
+				change_state_to(states.IDLEING)
+			
+			apply_horizontal_force(get_input_vector(), delta)
+			apply_gravity(delta)
+			check_jump()
+			move()
 		states.SLIDING:
 			print("Sliding")
 
