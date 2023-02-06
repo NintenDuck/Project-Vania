@@ -77,7 +77,6 @@ func apply_horizontal_force(input_vector:int, delta:float):
 
 
 func check_jump():
-	print("#Jumps: ", jump_counter)
 	if is_on_floor(): jump_counter = 0
 
 	if is_on_floor() or jump_counter < 2:
