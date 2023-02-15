@@ -1,21 +1,23 @@
 extends KinematicBody2D
 
-export(int) var VELOCITY 		= 0
-export(int) var MAX_VELOCITY 	= 0
-export(float) var FRICTION 		= 0.0
-export var JUMP_FORCE 			= 0
-export(float) var CUT_HEIGHT	= 0.0
-export(int) var GRAVITY			= 0
+export(int) var VELOCITY 				= 0
+export(int) var MAX_VELOCITY 			= 0
+export(float) var GROUND_FRICTION 		= 0.2
+export(float) var AIR_FRICTION 			= 0.05
+export var JUMP_FORCE 					= 0
+export(float) var CUT_HEIGHT			= 0.0
+export(int) var GRAVITY					= 0
 
-var motion 						= Vector2.ZERO
-var double_jump_powerup:bool	= true
-var jump_counter:int			= 0
+var motion 								= Vector2.ZERO
+var current_friction					= GROUND_FRICTION
+var double_jump_powerup:bool			= true
+var jump_counter:int					= 0
 
 enum states {
 	IDLEING,
 	WALKING,
 	JUMPING,
-	SLIDING,
+	WALLSLIDING,
 }
 
 var current_state = states.IDLEING
@@ -45,8 +47,8 @@ func _process(delta):
 			apply_gravity(delta)
 			check_jump()
 			move()
-		states.SLIDING:
-			print("Sliding")
+		states.WALLSLIDING:
+			print("Wall Sliding!")
 
 
 func _input(event):
@@ -65,7 +67,7 @@ func get_input_vector():
 
 
 func apply_friction():
-	motion.x = lerp( motion.x, 0, FRICTION )
+	motion.x = lerp( motion.x, 0, current_friction )
 
 
 func apply_horizontal_force(input_vector:int, delta:float):
