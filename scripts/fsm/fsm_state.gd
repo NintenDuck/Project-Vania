@@ -8,7 +8,7 @@ func initialize():
     pass
 
 
-func run( delta ):
+func run( _delta ):
     pass
 
 

@@ -1,5 +1,8 @@
 extends KinematicBody2D
 
+
+onready var fsm = FSM.new( self, $States, $States/Idle )
+
 export(int) var VELOCITY 				= 0
 export(int) var MAX_VELOCITY 			= 0
 export(float) var GROUND_FRICTION 		= 0.2
@@ -12,6 +15,34 @@ var motion 								= Vector2.ZERO
 var current_friction					= GROUND_FRICTION
 var double_jump_powerup:bool			= true
 var jump_counter:int					= 0
+
+
+
+func _physics_process( delta ):
+	fsm.run_machine( delta )
+
+
+func get_dir():
+	var dir = int( Input.is_action_pressed( "k_right" ) ) - \
+				int( Input.is_action_pressed( "k_left" ) )
+	return dir
+	
+	
+	
+	
+	
+	
+	
+	
+
+
+
+
+
+
+
+
+
 
 
 #==================================================================
