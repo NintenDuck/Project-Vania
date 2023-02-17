@@ -16,8 +16,9 @@ script = ExtResource( 5 )
 __meta__ = {
 "_edit_group_": true
 }
-VELOCITY = 500
-MAX_VELOCITY = 50
+VELOCITY = 10
+MAX_VELOCITY = 10
+GROUND_FRICTION = 0.05
 JUMP_FORCE = 100
 CUT_HEIGHT = 0.4
 GRAVITY = 300
